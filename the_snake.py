@@ -138,7 +138,7 @@ class Snake(GameObject):
 
     def draw(self):
         """Рисует тело, голову и затирает хвост."""
-        for pos in self.positions[:-1]:
+        for pos in self.positions:
             rect = pygame.Rect(pos, (GRID_SIZE, GRID_SIZE))
             pygame.draw.rect(screen, self.body_color, rect)
             pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
