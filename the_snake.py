@@ -1,10 +1,6 @@
 from random import choice, randint
 
 import pygame
-from pygame import Rect
-from pygame.time import Clock
-from pygame.surface import Surface
-
 
 # Размеры поля и сетки
 SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
@@ -28,9 +24,9 @@ SNAKE_COLOR = (0, 255, 0)
 SPEED = 20
 
 # Экран и таймер
-screen: Surface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
-pygame.display.set_caption("Snake")
-clock: Clock = pygame.time.Clock()
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
+pygame.display.set_caption('Snake')
+clock = pygame.time.Clock()
 
 
 class GameObject:
@@ -47,7 +43,7 @@ class GameObject:
         self.position = position
         self.body_color = body_color
 
-    def draw(self) -> None:
+    def draw(self):
         """Переопределяется в наследниках."""
         raise NotImplementedError
 
@@ -55,14 +51,13 @@ class GameObject:
 class Apple(GameObject):
     """Яблоко — одна клетка, появляется в случайной позиции."""
 
-    def __init__(self) -> None:
+    def __init__(self):
         super().__init__(body_color=APPLE_COLOR)
         self.randomize_position()
 
-    def randomize_position(self, forbidden=None) -> None:
+    def randomize_position(self, forbidden=None):
         """
         Ставит яблоко в случайную клетку.
-
         forbidden — координаты, куда ставить нельзя.
         """
         if forbidden is None:
@@ -77,21 +72,20 @@ class Apple(GameObject):
                 self.position = pos
                 break
 
-    def draw(self) -> None:
+    def draw(self):
         """Отрисовывает яблоко."""
-        rect = Rect(self.position, (GRID_SIZE, GRID_SIZE))
+        rect = pygame.Rect(self.position, (GRID_SIZE, GRID_SIZE))
         pygame.draw.rect(screen, self.body_color, rect)
         pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
 
 
 class Snake(GameObject):
     """
-    Змейка: список сегментов.
-
-    Управляет движением, ростом и сбросом состояния.
+    Змейка: список сегментов. Управляет движением, ростом
+    и сбросом состояния.
     """
 
-    def __init__(self) -> None:
+    def __init__(self):
         super().__init__(
             position=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2),
             body_color=SNAKE_COLOR,
@@ -106,16 +100,15 @@ class Snake(GameObject):
         """Координаты головы."""
         return self.positions[0]
 
-    def update_direction(self) -> None:
+    def update_direction(self):
         """Применяет направление, выбранное клавишей."""
         if self.next_direction:
             self.direction = self.next_direction
             self.next_direction = None
 
-    def move(self) -> None:
+    def move(self):
         """
         Двигает змейку на одну клетку. Телепорт по краям.
-
         Самоукус — reset().
         """
         head_x, head_y = self.get_head_position()
@@ -131,13 +124,12 @@ class Snake(GameObject):
             return
 
         self.positions.insert(0, new_head)
-
         if len(self.positions) > self.length:
             self.last = self.positions.pop()
         else:
             self.last = None
 
-    def reset(self) -> None:
+    def reset(self):
         """Возврат к начальному состоянию."""
         self.length = 1
         center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
@@ -147,22 +139,21 @@ class Snake(GameObject):
         self.last = None
         screen.fill(BOARD_BACKGROUND_COLOR)
 
-    def draw(self) -> None:
+    def draw(self):
         """Рисует тело, голову и затирает хвост."""
         for pos in self.positions:
-            rect = Rect(pos, (GRID_SIZE, GRID_SIZE))
+            rect = pygame.Rect(pos, (GRID_SIZE, GRID_SIZE))
             pygame.draw.rect(screen, self.body_color, rect)
             pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
 
         if self.last:
-            last_rect = Rect(self.last, (GRID_SIZE, GRID_SIZE))
+            last_rect = pygame.Rect(self.last, (GRID_SIZE, GRID_SIZE))
             pygame.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
 
 
-def handle_keys(snake: Snake) -> None:
+def handle_keys(snake: Snake):
     """
     Стрелки меняют направление (без разворота на 180°).
-
     Закрытие окна — выход.
     """
     for event in pygame.event.get():
@@ -181,7 +172,7 @@ def handle_keys(snake: Snake) -> None:
                 snake.next_direction = RIGHT
 
 
-def main() -> None:
+def main():
     """Инициализация и главный цикл."""
     pygame.init()
     screen.fill(BOARD_BACKGROUND_COLOR)
@@ -204,5 +195,5 @@ def main() -> None:
         pygame.display.update()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
